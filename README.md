@@ -81,4 +81,4 @@ This experiment builds on:
 
 The observed successful result was on **one AT&T SM-S928U using the exact DZF2 firmware/kernel**. It does **not** establish support for different S928U versions, S928U1, a different carrier firmware, later security patches, or other Samsung devices. Root was temporary and disappeared after reboot.
 
-Contributions, additional reproducibility data, and independent confirmations are welcome. Please include the exact model, firmware, running kernel, and outcome, and remove personal identifiers from logs before posting them.
+Contributions, additional reproducibility data, and independent confirmations are welcome. Please include the exact model, firmware, running kernel, and outcome.
