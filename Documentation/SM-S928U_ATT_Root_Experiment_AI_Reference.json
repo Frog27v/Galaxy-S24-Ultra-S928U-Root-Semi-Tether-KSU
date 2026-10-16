@@ -1,0 +1,110 @@
+{
+  "schema": "community-root-experiment-record/v1",
+  "title": "AT&T Galaxy S24 Ultra SM-S928U Android 16 Temporary KernelSU Root",
+  "date": "2026-10-16",
+  "primary_document": "Documentation/SM-S928U_ATT_Android16_KernelSU_Root_Full_Technical_Record.md",
+  "rooting_guide": "Documentation/SM-S928U_ATT_TMB_VZW_Complete_Rooting_Guide.md",
+  "result": {
+    "status": "successful",
+    "persistence": "temporary; lost on reboot",
+    "bootloader_unlocked": false,
+    "modified_boot_image_flashed": false,
+    "manager_version_code": 32525,
+    "driver_version_code": 32525,
+    "selinux": "Enforcing",
+    "su_context": "u:r:ksu:s0",
+    "logcat_restored": true
+  },
+  "tested_device": {
+    "manufacturer": "Samsung",
+    "model": "SM-S928U",
+    "market_carrier": "AT&T United States",
+    "product_codename": "e3q",
+    "android_version": 16,
+    "oneui_from_firmware_archive": "8.5",
+    "firmware": "S928USQS6DZF2",
+    "build": "BP4A.251205.006.S928USQS6DZF2",
+    "kernel": "6.1.145-android14-11-33419968-abS928USQS6DZF2",
+    "kernel_kmi": "android14-6.1",
+    "security_patch": "2026-06-05",
+    "bootloader_binary_revision": 6,
+    "bootloader_state": "locked"
+  },
+  "source": {
+    "exploit": {
+      "path": "Source/Root-My-Galaxy-Payloads/",
+      "upstream": "https://github.com/BuSung-dev/Root-My-Galaxy-Payloads",
+      "base_commit": "6e3223e689688540060ddd97a0927e927bfed207",
+      "local_change": "src/slide_app.c: two readiness loads changed from slide_pselect_write_window to slide_stack_write_window"
+    },
+    "kernelsu": {
+      "path": "Source/KernelSU-v3.2.5/",
+      "upstream": "https://github.com/tiann/KernelSU",
+      "base_commit": "b0bc817b4e966aa6aa830834eaf6ef765d821d40",
+      "tag": "v3.2.5",
+      "config": [
+        "CONFIG_KSU=m",
+        "CONFIG_KSU_SAMSUNG_KDP=y",
+        "CONFIG_KSU_SAMSUNG_RKP=y",
+        "CONFIG_KSU_SAMSUNG_DEFEX=y",
+        "CONFIG_KSU_SAMSUNG_NO_PATCH_TEXT=y"
+      ],
+      "note": "Full modified source snapshot includes untracked Samsung compatibility code; the local diff patch alone does not."
+    }
+  },
+  "build_environment": {
+    "android_ndk": "29.0.14206865 (r29)",
+    "android_ndk_clang": "21.0.0",
+    "ddk_image": "ghcr.io/ylarod/ddk-min:android14-6.1-20260313",
+    "ddk_image_digest": "sha256:1dd6ac340b627a90a4031d6d0df6b129d8cc949b139fb56032c898f023d3d5d3"
+  },
+  "artifacts_sha256": {
+    "cve43499-root": "54894e9bfa80fc36cfa03bd4ec4279e1d56eccc9719c9ee395b64ffd6792866b",
+    "cve43499-stable.so": "750a82852f3598f74d96037f73f22748302ab8860d1b6af54fddc276b7c3d3bc",
+    "ksud-s25u-kdp-v32525": "0404476629471d26233721f0a65a90f6fa57f4105416079dd91597027338e3fb",
+    "s928u-v32525-late-load-once.sh": "e8dfbf44d3a94a6768d222bd60b80002b89cc1066e04608e9acf0f9e095e0ff0",
+    "KernelSU-v3.2.5/kernel/kernelsu.ko": "003a4ee7506545a918cf11a8fd37d7eea2bc0a1d421ed8262092a0eb3ec1ff6e"
+  },
+  "commands": {
+    "identity": "adb shell 'getprop ro.product.model; getprop ro.build.version.incremental; uname -r'",
+    "bootstrap": "adb shell 'EXPLOIT_ATTEMPTS=1 P0_ATTEMPT_TIMEOUT_SEC=45 EXPLOIT_ATTEMPT_TIMEOUT_SEC=120 /data/local/tmp/cve43499-root --run-payload /data/local/tmp/cve43499-stable.so /data/local/tmp/cve43499-root /data/local/tmp/cve43499-reroot.log'",
+    "bootstrap_verify": "adb shell '/data/local/tmp/cve43499-root -c \"id; getenforce\"'",
+    "late_load": "adb shell '/data/local/tmp/cve43499-root -c \"sh /data/local/tmp/s928u-v32525-late-load-once.sh\"'",
+    "driver_verify": "adb shell 'grep -i kernelsu /proc/modules'",
+    "su_verify": "adb shell 'su -c id'",
+    "selinux_verify": "adb shell getenforce",
+    "mount_check": "adb shell 'su -c \"grep -F /system/bin/logcat /proc/self/mountinfo || true\"'"
+  },
+  "rootboot": {
+    "repository_directory": "RootBoot/",
+    "device_directory": "/sdcard/RootBoot/",
+    "entrypoint": "rootboot.sh",
+    "launch_command": "adb shell sh /sdcard/RootBoot/rootboot.sh",
+    "combined_script_end_to_end_verified": false
+  },
+  "key_observed_log_markers": [
+    "No compatible payload supports this model and kernel version",
+    "app fops slide attempt=1/1 triggered=1 verified=1",
+    "pipe-physrw-summary done=1 root=1",
+    "uid=2000->0",
+    "Kernel panic PC try_module_get+0x2c/0x1ac",
+    "KernelSU: patch syscall 42",
+    "driver 30001 manager 32525 before full history",
+    "driver 32525 manager 32525 after rebuild"
+  ],
+  "limitations": [
+    "Only AT&T SM-S928U with the exact firmware/kernel verified",
+    "T-Mobile and Verizon have not been hardware-root verified",
+    "Root lost on reboot",
+    "RootBoot combined script not independently hardware-verified end-to-end",
+    "Complete source snapshots provided; a bit-identical rebuild has not been independently demonstrated",
+    "Upstream third-party embedded BusyBox source provenance requires separate review"
+  ],
+  "primary_sources": [
+    "https://doc.samsungmobile.com/SM-S928U/029130240223/wel.html",
+    "https://samfw.com/firmware/SM-S928U/ATT/",
+    "https://github.com/BuSung-dev/Root-My-Galaxy",
+    "https://github.com/BuSung-dev/Root-My-Galaxy-Payloads",
+    "https://github.com/tiann/KernelSU"
+  ]
+}

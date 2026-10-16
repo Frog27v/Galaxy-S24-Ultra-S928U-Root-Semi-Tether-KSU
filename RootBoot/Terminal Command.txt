@@ -1,0 +1,1 @@
+adb shell sh /sdcard/RootBoot/rootboot.sh

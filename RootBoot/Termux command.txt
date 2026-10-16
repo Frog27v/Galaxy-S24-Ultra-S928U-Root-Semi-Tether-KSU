@@ -1,0 +1,4 @@
+adb pair 127.0.0.1:PAIRING_PORT PAIRING_CODE
+adb connect 127.0.0.1:CONNECTION_PORT
+
+adb shell sh /sdcard/RootBoot/rootboot.sh
