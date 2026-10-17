@@ -1,4 +1,6 @@
 # AT&T Galaxy S24 Ultra SM-S928U — Temporary KernelSU Root (Android 16)
+# Still in progress
+Got the device rooted, but re-rooting after reboot has (what seems to be) random successes
 
 A device-tested research record and experimental reroot package for **Samsung Galaxy S24 Ultra SM-S928U (AT&T)** with a **locked bootloader**.
 
